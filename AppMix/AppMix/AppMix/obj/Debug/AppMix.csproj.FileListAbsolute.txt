@@ -1,0 +1,11 @@
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\AppMix.dll
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\AppMix.pdb
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\Xamarin.Forms.Core.dll
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\Xamarin.Forms.Xaml.dll
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\Xamarin.Forms.Core.xml
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\Xamarin.Forms.Xaml.xml
+e:\xforms\AppMix\AppMix\AppMix\obj\Debug\AppMix.csprojResolveAssemblyReference.cache
+e:\xforms\AppMix\AppMix\AppMix\obj\Debug\AppMix.dll
+e:\xforms\AppMix\AppMix\AppMix\obj\Debug\AppMix.pdb
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\lib40.dll
+e:\xforms\AppMix\AppMix\AppMix\bin\Debug\lib40.pdb
