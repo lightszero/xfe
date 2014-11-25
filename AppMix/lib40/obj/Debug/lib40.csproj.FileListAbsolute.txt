@@ -1,5 +1,0 @@
-e:\xforms\AppMix\lib40\bin\Debug\lib40.dll
-e:\xforms\AppMix\lib40\bin\Debug\lib40.pdb
-e:\xforms\AppMix\lib40\obj\Debug\lib40.dll
-e:\xforms\AppMix\lib40\obj\Debug\lib40.pdb
-e:\xforms\AppMix\lib40\obj\Debug\lib40.csprojResolveAssemblyReference.cache
