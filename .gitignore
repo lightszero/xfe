@@ -17,6 +17,8 @@ obj
 bin
 Bin
 Obj
+out
+Out
 *.ide
 
 # =========================
