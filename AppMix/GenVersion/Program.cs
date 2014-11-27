@@ -186,7 +186,7 @@ namespace GenVersion
                             using (System.IO.Stream s = System.IO.File.Create(f.Key))
                             {
                                 scriptEnv.tokenParser.SaveTokenList(f.Value, s);
-                                files.Add(f.Key);
+                                files.Add(f.Key.ToLower());
                             }
                         }
                     }
