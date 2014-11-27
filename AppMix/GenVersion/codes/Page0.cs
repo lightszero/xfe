@@ -1,6 +1,6 @@
 ﻿
 using Xamarin.Forms;
-class Page0
+class page0
 {
     ContentPage mypage = null;
     public Page CreatePage()

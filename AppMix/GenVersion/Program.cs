@@ -47,8 +47,10 @@ namespace GenVersion
             srcpath = System.IO.Path.GetFullPath("../");
             destpath = System.IO.Path.GetFullPath("../out");
 
-
-
+            if (System.IO.Directory.Exists(destpath))
+            {
+                System.IO.Directory.Delete(destpath, true);
+            }
             //检查源文件
 
 
