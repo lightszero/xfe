@@ -28,6 +28,7 @@ namespace AppMix
                 Debug.WriteLine("<E>" + str);
             }
         }
+        static System.Net.WebRequest req;
         public static Page GetMainPage()
         {
             //ContentPage       单页面，页面中有一个View
@@ -73,32 +74,66 @@ namespace AppMix
             //}
             CarouselPage ccp = new CarouselPage();//滚动页面，有bug，子页面高度没自动算对
             //TabbedPage ccp = new TabbedPage();//Tab页面
-
+            ImageSource imgsrc = null;
             ccp.Title = "hi there.";
+            Action init = () =>
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                ContentPage cp = new ContentPage();
+                                cp.HeightRequest = cp.HeightRequest - 200;
+                                ccp.Children.Add(cp);
+                                cp.Title = "I'm " + i;
+                                StackLayout sl = new StackLayout();
+                                Button btn01 = new Button();
+                                btn01.Text = "calc 1+2";
+                                CSLE.CLS_Environment env = new CSLE.CLS_Environment(new Logger());
+                                btn01.Clicked += (s, e) =>
+                                    {
+                                        DateTime t0 = DateTime.Now;
+                                        var token = env.ParserToken("1+2");
+                                        var expr = env.Expr_CompilerToken(token, true);
 
-            for (int i = 0; i < 5; i++)
-            {
-                ContentPage cp = new ContentPage();
-                cp.HeightRequest = cp.HeightRequest - 200;
-                ccp.Children.Add(cp);
-                cp.Title = "I'm " + i;
-                Button btn01 = new Button();
-                btn01.Text = "calc 1+2";
-                CSLE.CLS_Environment env = new CSLE.CLS_Environment(new Logger());
-                btn01.Clicked += (s, e) =>
-                    {
-                        DateTime t0 = DateTime.Now;
-                        var token = env.ParserToken("1+2");
-                        var expr = env.Expr_CompilerToken(token, true);
+                                        var v = env.Expr_Execute(expr);
+                                        DateTime t1 = DateTime.Now;
+                                        Debug.WriteLine("v=" + v.value + "," + (t1 - t0).TotalSeconds);
+                                    };
+                                //btn01.VerticalOptions = LayoutOptions.Center;
+                                sl.Children.Add(btn01);
 
-                        var v = env.Expr_Execute(expr);
-                        DateTime t1 = DateTime.Now;
-                        Debug.WriteLine("v=" + v.value + "," + (t1 - t0).TotalSeconds);
-                    };
-                //btn01.VerticalOptions = LayoutOptions.Center;
-                cp.Content = btn01;
+                                Image image = new Image();
+                                image.Aspect = Aspect.AspectFit;
+                                image.Source = imgsrc;
+                                sl.Children.Add(image);
+                                cp.Content = sl;
 
-            }
+                            }
+                        };
+            req = System.Net.WebRequest.CreateHttp("http://images.takungpao.com/2013/0327/20130327123103850.jpg");
+            req.BeginGetResponse(
+                (ar) =>
+                {
+
+            //        var response = req.EndGetResponse(ar);
+            //        byte[] bs = new byte[response.ContentLength];
+            //        response.GetResponseStream().Read(bs, 0, bs.Length);
+                    
+                    
+
+                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                        {
+                            //imgsrc = ImageSource.FromStream(()=>
+                            //    {
+                            //        return new System.IO.MemoryStream(bs);
+                            //    });
+
+                             imgsrc = new UriImageSource() { Uri = new Uri("http://images.takungpao.com/2013/0327/20130327123103850.jpg") };
+                            init();
+                        }
+                  );
+                }, null);
+
+
             return ccp;
 
         }
