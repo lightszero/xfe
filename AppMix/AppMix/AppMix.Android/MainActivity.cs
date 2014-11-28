@@ -9,12 +9,14 @@ using Android.OS;
 
 using Xamarin.Forms.Platform.Android;
 using System.Collections.Generic;
+using Xamarin.Forms;
 
 namespace AppMix.Droid
 {
     [Activity(Label = "AppMix", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : AndroidActivity
     {
+       
         protected override void OnCreate(Bundle bundle)
         {
             //不可旋转
@@ -34,9 +36,21 @@ namespace AppMix.Droid
             startParam["width"] = size.X;
             startParam["height"] = size.Y;
             startParam["savepath"] = path;
-
-            SetPage(App.GetMainPage(startParam));
+            Page npage = null;
+            npage = App.GetMainPage(startParam);
+            SetPage(npage);
         }
+        //public override void OnBackPressed()
+        //{
+        //    if (npage.CurrentPage == App.Root)
+        //    {
+        //        Java.Lang.Runtime.GetRuntime().Exit(0);
+        //    }
+        //    else
+        //    {
+        //        base.OnBackPressed();
+        //    }
+        //}
         protected override void OnDestroy()
         {
             base.OnDestroy();

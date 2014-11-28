@@ -1,14 +1,23 @@
 ﻿
+using System;
 using Xamarin.Forms;
 class page0
 {
-    ContentPage mypage = null;
-    public Page CreatePage()
+    static ContentPage _page;
+    static public void FillPage(ContentPage page)
     {
-        mypage = new ContentPage();
+        _page = page;
         Button btn = new Button();
         btn.BackgroundColor = Color.Red;
-        mypage.Content = btn;
-        return mypage;
+        btn.Text = "这是由脚本配置的主页";
+
+        EventHandler handler =  onClick;
+        btn.Clicked += handler;
+        page.Content = btn;
     }
+    static void onClick(object sender,EventArgs args)
+    {
+        _page.Navigation.PushAsync(page1.CreatePage());
+    }
+
 }

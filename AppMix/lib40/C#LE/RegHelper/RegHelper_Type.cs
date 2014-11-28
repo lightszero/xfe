@@ -276,7 +276,16 @@ namespace CSLE
                 }
                 else
                 {
-                    throw new Exception("函数不存在function:" + type.ToString() + "." + func);
+                    foreach(var s in  type.GetInterfaces())
+                    {
+                        targetop = s.GetMethod(func, types.ToArray());
+                        if (targetop != null) break;
+                    }
+                    //var ms = type.GetMethods();
+                    if (targetop == null)
+                    {
+                        throw new Exception("函数不存在function:" + type.ToString() + "." + func);
+                    }
                 }
             }
             v.value = targetop.Invoke(object_this, _oparams.ToArray());

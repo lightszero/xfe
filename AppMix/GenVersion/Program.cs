@@ -38,11 +38,10 @@ namespace GenVersion
         static CSLE.CLS_Environment scriptEnv;
         static void Main(string[] args)
         {
-
             logger = new Logger();
             scriptEnv = new CSLE.CLS_Environment(logger);
 
-
+            scriptEnv.RegType(new CSLE.RegHelper_DeleAction<object,EventArgs>(typeof(EventHandler),"EventHandler"));
             sha1 = SHA1.Create();
             srcpath = System.IO.Path.GetFullPath("../");
             destpath = System.IO.Path.GetFullPath("../out");
@@ -75,44 +74,28 @@ namespace GenVersion
             string[] reginfo = System.IO.File.ReadAllLines(System.IO.Path.Combine(srcpath, "txts\\regtype.txt"));
             foreach (var r in reginfo)
             {
-                string[] s = r.Split(',');
+                string[] s = r.Split(':');
+                if (s.Length != 2) continue;
 
-                System.Reflection.Assembly asmb = null;
-                try
-                {
-                    asmb = System.Reflection.Assembly.LoadFrom(s[1]);
-                }
-                catch
-                {
-
-                }
 
                 try
                 {
-                    Type t = null;
-                    if (asmb == null)
-                    {
-                        t = Type.GetType(s[0]);
+                    Type t = Type.GetType(s[0]);
 
-                    }
-                    else
-                    {
-                        t = asmb.GetType(s[0]);
-                    }
                     if (t != null)
                     {
 
-                        scriptEnv.RegType(new CSLE.RegHelper_Type(t, s[2]));
-                        logger.Log_Warn("注册:" + s[2] + "  from" + s[0]);
+                        scriptEnv.RegType(new CSLE.RegHelper_Type(t, s[1]));
+                        logger.Log_Warn("注册:" + s[1] + "  from" + s[0]);
                     }
                     else
                     {
-                        logger.Log_Error("错误注册:" + s[2] + "  from" + s[0]);
+                        logger.Log_Error("错误注册:" + s[1] + "  from" + s[0]);
                     }
                 }
                 catch
                 {
-                    logger.Log_Error("错误注册:" + s[2] + "  from" + s[0]);
+                    logger.Log_Error("错误注册:" + s[1] + "  from" + s[0]);
                 }
 
             }
@@ -170,24 +153,53 @@ namespace GenVersion
                     if (spath == "codes")//处理代码
                     {
                         logger.Log_Warn("================编译开始");
+
+
                         var fs = System.IO.Directory.GetFiles(sdir, "*.cs", System.IO.SearchOption.AllDirectories);
                         Dictionary<string, IList<CSLE.Token>> projs = new Dictionary<string, IList<CSLE.Token>>();
                         foreach (var f in fs)
                         {
+
                             //build
-                            var token = scriptEnv.ParserToken(System.IO.File.ReadAllText(f));
-                            projs[f.Replace(".cs", ".bytes")] = token;
+                            try
+                            {
+                                var token = scriptEnv.ParserToken(System.IO.File.ReadAllText(f));
+                                projs[f.Replace(".cs", ".bytes")] = token;
+                            }
+                            catch(Exception err)
+                            {
+                                logger.Log_Error("token err "+err.ToString());
+                            }
+                      
                             //addbuildresult to fs
                         }
-                        scriptEnv.Project_Compiler(projs, true);
+                        try
+                        {
+                            scriptEnv.Project_Compiler(projs, true);
+                        }
+                        catch (Exception err)
+                        {
+                            logger.Log_Error("compiler err " + err.ToString());
+                        }
                         logger.Log_Warn("================编译结束");
+
+                        string outindex = "";
                         foreach (var f in projs)
                         {
+                            var nf = f.Key.Substring(srcpath.Length).Replace(".cs", ".bytes").ToLower();
+                            outindex += nf + "\n";
                             using (System.IO.Stream s = System.IO.File.Create(f.Key))
                             {
                                 scriptEnv.tokenParser.SaveTokenList(f.Value, s);
                                 files.Add(f.Key.ToLower());
                             }
+                        }
+                        string indexfile = System.IO.Path.Combine(srcpath, "codes\\codes.txt");
+                        using (System.IO.Stream s = System.IO.File.Create(indexfile))
+                        {
+                            byte[] buf = System.Text.Encoding.UTF8.GetBytes(outindex);
+                            s.Write(buf, 0, buf.Length);
+                            files.Add(indexfile.ToLower());
                         }
                     }
                     else if (
@@ -275,7 +287,12 @@ namespace GenVersion
                     totallen += f.flen;
                 }
                 string filelistfile = System.IO.Path.Combine(destpath, "filelist.txt");
-                System.IO.File.WriteAllLines(filelistfile, outdata);
+                string outstr = "";
+                foreach (var f in outdata)
+                {
+                    outstr += f + "\n";
+                }
+                System.IO.File.WriteAllBytes(filelistfile, System.Text.Encoding.UTF8.GetBytes(outstr));
 
                 string infofile = System.IO.Path.Combine(destpath, "ver.txt");
                 using (System.IO.Stream s = System.IO.File.OpenRead(filelistfile))

@@ -26,7 +26,7 @@ namespace update
         public updatemgr()
         {
             wc=new MyWebClient();
-            wc.Timeout=1;
+            wc.Timeout=5;
             wc.Encoding = System.Text.Encoding.UTF8;
             sha1 = SHA1.Create();
         }
@@ -57,7 +57,7 @@ namespace update
                         totalsize = verinfo.flen;
                         //break;
                     }
-                    catch
+                    catch(Exception err)
                     {
                         firsturl = "";
                     }
@@ -191,11 +191,15 @@ namespace update
                         else
                         {
                             errors.Add(f);
+                            if (onUpdateError != null)
+                                onUpdateError("更新err" + f.filename);
                         }
                     }
                     catch
                     {
                         errors.Add(f);
+                        if (onUpdateError != null)
+                            onUpdateError("更新err" + f.filename);
                     }
                 }
 
