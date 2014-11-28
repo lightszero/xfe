@@ -131,23 +131,45 @@ namespace AppMix
                 }
                 App.envScript = new CSLE.CLS_Environment(new App.Logger());
 
-                App.envScript.RegType(new CSLE.RegHelper_DeleAction<object, EventArgs>(typeof(EventHandler), "EventHandler"));
+                //App.envScript.RegType(new CSLE.RegHelper_DeleAction<object, EventArgs>(typeof(EventHandler), "EventHandler"));
 
 
                 string[] lines = str.Split('\n');
                 foreach (var l in lines)
                 {
                     if (string.IsNullOrEmpty(l)) continue;
-                    string[] ss = l.Split(':');
-                    if (ss.Length != 2) continue;
-                    Type t = Type.GetType(ss[0]);
-                    if (t != null)
+                    string[] ss = l.Split(new string[] { "=>", ":" }, StringSplitOptions.None);
+                    if (ss.Length < 2) continue;
+                    if (ss.Length == 2)
                     {
-                        App.envScript.RegType(new CSLE.RegHelper_Type(t, ss[1]));
+                        Type t = Type.GetType(ss[0]);
+                        if (t != null)
+                        {
+                            App.envScript.RegType(new CSLE.RegHelper_Type(t, ss[1]));
+                        }
+                        else
+                        {
+                            App.envScript.logger.Log_Error("RegType Error：" + ss[1] + "  from" + ss[0]);
+                        }
                     }
                     else
                     {
-                        App.envScript.logger.Log_Error("RegType Error：" + ss[1] + "  from" + ss[0]);
+                        try
+                        {
+                            string cslename = typeof(CSLE.RegHelper_DeleAction).Assembly.FullName;
+                            Type tReg = Type.GetType(ss[1] + "," + cslename);
+                            Type tDele = Type.GetType(ss[2]);
+                            var con = tReg.GetConstructor(new Type[] { typeof(Type), typeof(string) });
+                            var type = con.Invoke(new object[] { tDele, ss[3] }) as CSLE.ICLS_Type_Dele;
+                            App.envScript.RegType(type);
+
+                            //logger.Log_Warn("注册Dele:" + s[3] + "  from" + s[2] + "||" + s[1]);
+                        }
+                        catch
+                        {
+                            App.envScript.logger.Log_Error("Error注册Dele:" + ss[3] + "  from" + ss[2] + "||" + ss[1]);
+
+                        }
                     }
                 }
                 Label labelr = new Label();
