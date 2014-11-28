@@ -156,8 +156,8 @@ namespace AppMix
                     {
                         try
                         {
-                            string cslename = typeof(CSLE.RegHelper_DeleAction).Assembly.FullName;
-                            Type tReg = Type.GetType(ss[1] + "," + cslename);
+
+                            Type tReg = Type.GetType(ss[1]);
                             Type tDele = Type.GetType(ss[2]);
                             var con = tReg.GetConstructor(new Type[] { typeof(Type), typeof(string) });
                             var type = con.Invoke(new object[] { tDele, ss[3] }) as CSLE.ICLS_Type_Dele;

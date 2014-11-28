@@ -124,6 +124,7 @@
     <Compile Include="C#LE\_Interface\CLS_Function.cs" />
     <Compile Include="C#LE\_Interface\CLS_Loger.cs" />
     <Compile Include="C#LE\_Interface\CLS_Type.cs" />
+    <Compile Include="MyJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

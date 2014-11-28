@@ -41,7 +41,7 @@ namespace GenVersion
             logger = new Logger();
             scriptEnv = new CSLE.CLS_Environment(logger);
 
-            string name1 =typeof(CSLE.RegHelper_DeleAction<object, EventArgs>).AssemblyQualifiedName;
+            string name1 = typeof(MyJson.JsonNode_Array).AssemblyQualifiedName;
             //string name2 = typeof(EventHandler).AssemblyQualifiedName;
             //scriptEnv.RegType(new CSLE.RegHelper_DeleAction<object,EventArgs>(typeof(EventHandler),"EventHandler"));
             sha1 = SHA1.Create();
@@ -76,8 +76,8 @@ namespace GenVersion
             string[] reginfo = System.IO.File.ReadAllLines(System.IO.Path.Combine(srcpath, "txts\\regtype.txt"));
             foreach (var r in reginfo)
             {
-                string[] s = r.Split(new string[]{"=>",":"},StringSplitOptions.None);
-                if (s.Length <2) continue;
+                string[] s = r.Split(new string[] { "=>", ":" }, StringSplitOptions.None);
+                if (s.Length < 2) continue;
 
 
                 try
@@ -102,14 +102,14 @@ namespace GenVersion
                         //Type tReg = typeof(CSLE.ICLS_Type_Dele).Assembly.GetType(s[1]);
                         try
                         {
-                            string cslename=typeof(CSLE.RegHelper_DeleAction).Assembly.FullName;
-                            Type tReg = Type.GetType(s[1] + "," + cslename);
+
+                            Type tReg = Type.GetType(s[1]);
                             Type tDele = Type.GetType(s[2]);
                             var con = tReg.GetConstructor(new Type[] { typeof(Type), typeof(string) });
                             var type = con.Invoke(new object[] { tDele, s[3] }) as CSLE.ICLS_Type_Dele;
                             scriptEnv.RegType(type);
 
-                            logger.Log_Warn("注册Dele:" + s[3] + "  from" + s[2]+"||"+s[1]);
+                            logger.Log_Warn("注册Dele:" + s[3] + "  from" + s[2] + "||" + s[1]);
                         }
                         catch
                         {
@@ -191,11 +191,11 @@ namespace GenVersion
                                 var token = scriptEnv.ParserToken(System.IO.File.ReadAllText(f));
                                 projs[f.Replace(".cs", ".bytes")] = token;
                             }
-                            catch(Exception err)
+                            catch (Exception err)
                             {
-                                logger.Log_Error("token err "+err.ToString());
+                                logger.Log_Error("token err " + err.ToString());
                             }
-                      
+
                             //addbuildresult to fs
                         }
                         try
