@@ -59,5 +59,9 @@ namespace update
             if (this.flen != i.flen) return false;
             return TestHash(i.hash);
         }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
 }
