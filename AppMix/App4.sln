@@ -7,20 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App4.Droid", "App4\App4.Dro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib40", "lib40\lib40.csproj", "{0AA60957-355A-48B8-B560-44E10686A9B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libAndroid", "androidlib\libAndroid.csproj", "{E43891E5-EA33-4C41-8AD3-BE70F51E0DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "androidlib", "androidlib\androidlib.csproj", "{E43891E5-EA33-4C41-8AD3-BE70F51E0DB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenVersion", "GenVersion\GenVersion.csproj", "{8E1BCD13-B697-4034-9707-35CE85C95E7A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App4.WinPhone", "App4\App4.WinPhone\App4.WinPhone.csproj", "{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libWP8", "libWP8\libWP8.csproj", "{20E10A19-AA42-4A47-8053-B54FEC923827}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E222B70C-CFAE-4C74-8955-6056C56BF62A}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -222,9 +215,9 @@ Global
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|ARM.Deploy.0 = Debug|ARM
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
+		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|x86.ActiveCfg = Debug|x86
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|x86.Build.0 = Debug|x86
 		{557A3E95-F46C-42F9-9D43-E30BC6FCE08C}.Debug|x86.Deploy.0 = Debug|x86
@@ -268,8 +261,8 @@ Global
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|ARM.Build.0 = Debug|ARM
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|x86.ActiveCfg = Debug|x86
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Debug|x86.Build.0 = Debug|x86
 		{20E10A19-AA42-4A47-8053-B54FEC923827}.Release|Any CPU.ActiveCfg = Release|Any CPU
