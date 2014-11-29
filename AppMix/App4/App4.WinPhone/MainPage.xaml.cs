@@ -16,7 +16,7 @@ namespace App4.WinPhone
         public MainPage()
         {
             InitializeComponent();
-            SupportedOrientations = SupportedPageOrientation.PortraitOrLandscape;
+            SupportedOrientations = SupportedPageOrientation.Portrait;
 
             global::Xamarin.Forms.Forms.Init();
 
@@ -28,15 +28,11 @@ namespace App4.WinPhone
             //string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             //string path = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
 
-            string path = Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
-            //string path = "C:\\Data\\Users\\DefaultAppAccount\\AppData\\{"
-            //+Windows.ApplicationModel.Store.CurrentApp.AppId+"}\\Local\\IsolatedStore";
-            startParam["width"] = 480;// size.X;
-            startParam["height"] = 800;// size.Y;
+            string path = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+            startParam["width"] = (int)Application.Current.Host.Content.ActualWidth; //480;// size.X;
+            startParam["height"] = (int)Application.Current.Host.Content.ActualHeight;// 800;// size.Y;
             startParam["savepath"] = path;
             LoadApplication(new AppMix.App(startParam));
-
-            //LoadApplication(new App4.App());
         }
     }
 }

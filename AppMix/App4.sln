@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App4.Droid", "App4\App4.Dro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib40", "lib40\lib40.csproj", "{0AA60957-355A-48B8-B560-44E10686A9B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "androidlib", "androidlib\androidlib.csproj", "{E43891E5-EA33-4C41-8AD3-BE70F51E0DB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libAndroid", "androidlib\libAndroid.csproj", "{E43891E5-EA33-4C41-8AD3-BE70F51E0DB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenVersion", "GenVersion\GenVersion.csproj", "{8E1BCD13-B697-4034-9707-35CE85C95E7A}"
 EndProject

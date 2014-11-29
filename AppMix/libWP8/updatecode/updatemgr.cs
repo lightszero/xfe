@@ -31,15 +31,21 @@ namespace update
             bool bGot = false;
             byte[] got = null;
             var req=WebRequest.CreateHttp(url);
-            req.BeginGetResponse((ar) =>
-                {
-                   var rsp= req.EndGetResponse(ar);
-                   byte[] buf = new byte[rsp.ContentLength];
-                   rsp.GetResponseStream().Read(buf, 0, buf.Length);
-                   got = buf;
-                   bGot = true;
-                }, null);
-
+            try
+            {
+                req.BeginGetResponse((ar) =>
+                    {
+                        var rsp = req.EndGetResponse(ar);
+                        byte[] buf = new byte[rsp.ContentLength];
+                        rsp.GetResponseStream().Read(buf, 0, buf.Length);
+                        got = buf;
+                        bGot = true;
+                    }, null);
+            }
+            catch(Exception err)
+            {
+                throw new Exception("downstr err:"+url, err);
+            }
 
             while (!bGot)
             {
@@ -55,16 +61,22 @@ namespace update
             bool bGot = false;
             byte[] got = null;
             var req = WebRequest.CreateHttp(url);
-            req.BeginGetResponse((ar) =>
+            try
             {
-                var rsp = req.EndGetResponse(ar);
-                byte[] buf = new byte[rsp.ContentLength];
-                rsp.GetResponseStream().Read(buf, 0, buf.Length);
-                got = buf;
-                bGot = true;
-            }, null);
+                req.BeginGetResponse((ar) =>
+                {
+                    var rsp = req.EndGetResponse(ar);
+                    byte[] buf = new byte[rsp.ContentLength];
+                    rsp.GetResponseStream().Read(buf, 0, buf.Length);
+                    got = buf;
+                    bGot = true;
+                }, null);
 
-
+            }
+            catch(Exception err)
+            {
+                throw new Exception("downdata err:" + url, err);
+            }
             while (!bGot)
             {
                 System.Threading.Thread.Sleep(1);
@@ -174,6 +186,7 @@ namespace update
                     var lines = updatemgr.ReadAllLines(outfilename);
                     foreach (var line in lines)
                     {
+                        if (string.IsNullOrEmpty(line)) continue;
                         files.Add(fileinfo.Read(line));
                     }
                     filecount = files.Count;

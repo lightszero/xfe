@@ -8,7 +8,7 @@ using Xamarin.Forms;
 namespace AppMix
 {
 
-    public class App:Application
+    public class App : Application
     {
         public App(Dictionary<string, object> _startparam)
         {
@@ -72,8 +72,8 @@ namespace AppMix
               {
 
                   update.MyWebClient wc = new update.MyWebClient();
-   
-                  str  =  wc.DownloadString(url);
+
+                  str = wc.DownloadString(url);
 
               }
               catch (Exception err)

@@ -41,6 +41,7 @@ namespace AppMix
             layout.Children.Add(label1);
 
             Editor edit = new Editor();//文本框
+            edit.BackgroundColor = Color.Gray;
             edit.Text = "http://lightszero.github.io/tui/";
             layout.Children.Add(edit);
 
