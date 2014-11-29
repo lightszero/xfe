@@ -20,6 +20,7 @@ Obj
 out
 Out
 *.ide
+*.suo
 
 # =========================
 # Operating System Files
@@ -48,8 +49,5 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-/AppMix/*.suo
-
-/AppMix/packages
 
 *.bytes
