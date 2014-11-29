@@ -27,11 +27,13 @@ namespace App4.WinPhone
             //this.WindowManager.DefaultDisplay.GetSize(size);
             //string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             //string path = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-            
-            //IsolatedStorageFile file = "C:\\Data\\Users\\DefaultAppAccount\\AppData\\{2E66C0E1-F4F9-4A54-835E-5E3038237D7A}\\Local\\IsolatedStore";
+
+            string path = Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
+            //string path = "C:\\Data\\Users\\DefaultAppAccount\\AppData\\{"
+            //+Windows.ApplicationModel.Store.CurrentApp.AppId+"}\\Local\\IsolatedStore";
             startParam["width"] = 480;// size.X;
             startParam["height"] = 800;// size.Y;
-            startParam["savepath"] = "/";// path;
+            startParam["savepath"] = path;
             LoadApplication(new AppMix.App(startParam));
 
             //LoadApplication(new App4.App());

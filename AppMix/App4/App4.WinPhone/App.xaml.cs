@@ -23,6 +23,7 @@ namespace App4.WinPhone
         /// </summary>
         public App()
         {
+            
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
 
