@@ -18,7 +18,7 @@ namespace CSLE
         {
             get
             {
-                return "0.55Beta";
+                return "0.60.1Beta";
             }
         }
         public CLS_Environment(ICLS_Logger logger)
@@ -47,6 +47,10 @@ namespace CSLE
             RegType(new CLS_Type_Short());
             RegType(new CLS_Type_Long());
             RegType(new CLS_Type_ULong());
+
+            RegType(new RegHelper_Type(typeof(object),"object"));
+            RegType(new RegHelper_Type(typeof(List<>), "List"));
+            RegType(new RegHelper_Type(typeof(Dictionary<,>), "Dictionary"));
 
             typess["null"] = new CLS_Type_NULL();
             //contentGloabl = CreateContent();
@@ -162,7 +166,12 @@ namespace CSLE
                             Type[] types = new Type[_types.Count];
                             for (int i = 0; i < types.Length; i++)
                             {
-                                Type rt = GetTypeByKeyword(_types[i]).type;
+                                CLType t = GetTypeByKeyword(_types[i]).type;
+                                Type rt = t;
+                                if(rt==null&&t!=null)
+                                {
+                                    rt = typeof(object);
+                                }
                                 types[i] = rt;
                             }
                             Type IType = gentype.MakeGenericType(types);

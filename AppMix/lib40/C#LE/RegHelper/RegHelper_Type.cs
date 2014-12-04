@@ -36,9 +36,10 @@ namespace CSLE
         }
         public virtual CLS_Content.Value StaticCall(CLS_Content environment, string function, IList<CLS_Content.Value> _params, MethodCache cache = null)
         {
-
+            bool needConvert = false;
             List<object> _oparams = new List<object>();
             List<Type> types = new List<Type>();
+            bool bEm = false;
             foreach (var p in _params)
             {
                 _oparams.Add(p.value);
@@ -48,10 +49,17 @@ namespace CSLE
                 }
                 else
                 {
+                    if (p.type == null)
+                    {
+                        bEm = true;
+
+                    }
                     types.Add(p.type);
                 }
             }
-            var targetop = type.GetMethod(function, types.ToArray());
+            System.Reflection.MethodInfo targetop = null;
+            if (!bEm)
+                targetop = type.GetMethod(function, types.ToArray());
             //if (targetop == null && type.BaseType != null)//加上父类型静态函数查找,典型的现象是 GameObject.Destory
             //{
             //    targetop = type.BaseType.GetMethod(function, types.ToArray());
@@ -60,41 +68,57 @@ namespace CSLE
             {
                 if (function[function.Length - 1] == '>')//这是一个临时的模板函数调用
                 {
-
-                    string[] sf = function.Split(new char[] { '<', ',', '>' }, StringSplitOptions.RemoveEmptyEntries);
-                    string tfunc = sf[0];
-                    Type[] gtypes = new Type[sf.Length - 1];
-                    for (int i = 1; i < sf.Length; i++)
+                    int sppos = function.IndexOf('<', 0);
+                    string tfunc = function.Substring(0, sppos);
+                    string strparam = function.Substring(sppos + 1, function.Length - sppos - 2);
+                    string[] sf = strparam.Split(',');
+                    //string tfunc = sf[0];
+                    Type[] gtypes = new Type[sf.Length];
+                    for (int i = 0; i < sf.Length; i++)
                     {
-                        gtypes[i - 1] = environment.environment.GetTypeByKeyword(sf[i]).type;
+                        gtypes[i] = environment.environment.GetTypeByKeyword(sf[i]).type;
                     }
                     targetop = FindTMethod(type, tfunc, _params, gtypes);
 
                 }
-                else
+                if (targetop == null)
                 {
                     Type ptype = type.BaseType;
                     while (ptype != null)
                     {
                         targetop = ptype.GetMethod(function, types.ToArray());
                         if (targetop != null) break;
+                        var t = environment.environment.GetType(ptype);
+                        try
+                        {
+                            return t.function.StaticCall(environment, function, _params, cache);
+                        }
+                        catch
+                        {
+
+                        }
                         ptype = ptype.BaseType;
                     }
 
                 }
             }
-            if (cache != null)
-            {
-                if (targetop == null)
-                {//因为有cache的存在，可以更慢更多的查找啦，哈哈哈哈
-
-                }
-                cache.info = targetop;
+            if (targetop == null)
+            {//因为有cache的存在，可以更慢更多的查找啦，哈哈哈哈
+                targetop = GetMethodSlow(environment, true, function, types, _oparams);
+                needConvert = true;
             }
-            else if (targetop == null)
+
+            if (targetop == null)
             {
                 throw new Exception("函数不存在function:" + type.ToString() + "." + function);
             }
+            if (cache != null)
+            {
+                cache.info = targetop;
+                cache.slow = needConvert;
+            }
+
+
             CLS_Content.Value v = new CLS_Content.Value();
             v.value = targetop.Invoke(null, _oparams.ToArray());
             v.type = targetop.ReturnType;
@@ -103,7 +127,7 @@ namespace CSLE
 
         }
 
-        public virtual CLS_Content.Value StaticCallCache(CLS_Content environment, IList<CLS_Content.Value> _params, MethodCache cache)
+        public virtual CLS_Content.Value StaticCallCache(CLS_Content content, IList<CLS_Content.Value> _params, MethodCache cache)
         {
 
             List<object> _oparams = new List<object>();
@@ -121,6 +145,24 @@ namespace CSLE
                 }
             }
             var targetop = cache.info;
+            if (cache.slow)
+            {
+                var pp = targetop.GetParameters();
+                for (int i = 0; i < pp.Length; i++)
+                {
+                    if (i >= _params.Count)
+                    {
+                        _oparams.Add(pp[i].DefaultValue);
+                    }
+                    else
+                    {
+                        if (pp[i].ParameterType != (Type)_params[i].type)
+                        {
+                            _oparams[i] = content.environment.GetType(_params[i].type).ConvertTo(content, _oparams[i], pp[i].ParameterType);
+                        }
+                    }
+                }
+            }
             CLS_Content.Value v = new CLS_Content.Value();
             v.value = targetop.Invoke(null, _oparams.ToArray());
             v.type = targetop.ReturnType;
@@ -131,7 +173,7 @@ namespace CSLE
 
         public virtual CLS_Content.Value StaticValueGet(CLS_Content environment, string valuename)
         {
-            var v= MemberValueGet(environment, null, valuename);
+            var v = MemberValueGet(environment, null, valuename);
             if (v == null)
             {
                 if (type.BaseType != null)
@@ -273,10 +315,12 @@ namespace CSLE
             //targetop = targetop.MakeGenericMethod(gtypes);
             return null;
         }
-        public virtual CLS_Content.Value MemberCall(CLS_Content environment, object object_this, string func, IList<CLS_Content.Value> _params, MethodCache cache = null)
+        public virtual CLS_Content.Value MemberCall(CLS_Content environment, object object_this, string function, IList<CLS_Content.Value> _params, MethodCache cache = null)
         {
+            bool needConvert = false;
             List<Type> types = new List<Type>();
             List<object> _oparams = new List<object>();
+            bool bEm = false;
             foreach (var p in _params)
             {
                 {
@@ -288,60 +332,176 @@ namespace CSLE
                 }
                 else
                 {
+                    if (p.type == null)
+                    {
+                        bEm = true;
+                    }
                     types.Add(p.type);
                 }
             }
 
-            var targetop = type.GetMethod(func, types.ToArray());
+            System.Reflection.MethodInfo targetop = null;
+            if (!bEm)
+            {
+                targetop = type.GetMethod(function, types.ToArray());
+            }
             CLS_Content.Value v = new CLS_Content.Value();
             if (targetop == null)
             {
-                if (func[func.Length - 1] == '>')//这是一个临时的模板函数调用
+                if (function[function.Length - 1] == '>')//这是一个临时的模板函数调用
                 {
-
-                    string[] sf = func.Split(new char[] { '<', ',', '>' }, StringSplitOptions.RemoveEmptyEntries);
-                    string tfunc = sf[0];
-
-                    Type[] gtypes = new Type[sf.Length - 1];
-
-                    for (int i = 1; i < sf.Length; i++)
+                    int sppos = function.IndexOf('<', 0);
+                    string tfunc = function.Substring(0, sppos);
+                    string strparam = function.Substring(sppos + 1, function.Length - sppos - 2);
+                    string[] sf = strparam.Split(',');
+                    //string tfunc = sf[0];
+                    Type[] gtypes = new Type[sf.Length];
+                    for (int i = 0; i < sf.Length; i++)
                     {
-                        gtypes[i - 1] = environment.environment.GetTypeByKeyword(sf[i]).type;
+                        gtypes[i] = environment.environment.GetTypeByKeyword(sf[i]).type;
                     }
                     targetop = FindTMethod(type, tfunc, _params, gtypes);
 
                 }
                 else
                 {
-                    foreach (var s in type.GetInterfaces())
+                    if (!bEm)
                     {
-                        targetop = s.GetMethod(func, types.ToArray());
-                        if (targetop != null) break;
+                        foreach (var s in type.GetInterfaces())
+                        {
+                            targetop = s.GetMethod(function, types.ToArray());
+                            if (targetop != null) break;
+                        }
                     }
-                    //var ms = type.GetMethods();
+                    if (targetop == null)
+                    {//因为有cache的存在，可以更慢更多的查找啦，哈哈哈哈
+                        targetop = GetMethodSlow(environment, false, function, types, _oparams);
+                        needConvert = true;
+                    }
                     if (targetop == null)
                     {
-                        throw new Exception("函数不存在function:" + type.ToString() + "." + func);
+                        throw new Exception("函数不存在function:" + type.ToString() + "." + function);
                     }
                 }
             }
             if (cache != null)
             {
-                if (targetop == null)
-                {//因为有cache的存在，可以更慢更多的查找啦，哈哈哈哈
-
-                }
                 cache.info = targetop;
+                cache.slow = needConvert;
             }
-            else if (targetop == null)
+
+            if (targetop == null)
             {
-                throw new Exception("函数不存在function:" + type.ToString() + "." + func);
+                throw new Exception("函数不存在function:" + type.ToString() + "." + function);
             }
             v.value = targetop.Invoke(object_this, _oparams.ToArray());
             v.type = targetop.ReturnType;
             return v;
         }
-        public virtual CLS_Content.Value MemberCallCache(CLS_Content environment, object object_this, IList<CLS_Content.Value> _params, MethodCache cache)
+
+        Dictionary<string, IList<System.Reflection.MethodInfo>> slowCache = null;
+
+        System.Reflection.MethodInfo GetMethodSlow(CSLE.CLS_Content content, bool bStatic, string funcname, IList<Type> types, IList<object> _params)
+        {
+            List<object> myparams = new List<object>(_params);
+            if (slowCache == null)
+            {
+                System.Reflection.MethodInfo[] ms = this.type.GetMethods();
+                slowCache = new Dictionary<string, IList<System.Reflection.MethodInfo>>();
+                foreach (var m in ms)
+                {
+                    string name = m.IsStatic ? "s=" + m.Name : m.Name;
+                    if (slowCache.ContainsKey(name) == false)
+                    {
+                        slowCache[name] = new List<System.Reflection.MethodInfo>();
+                    }
+                    slowCache[name].Add(m);
+                }
+            }
+            IList<System.Reflection.MethodInfo> minfo = null;
+
+            if (slowCache.TryGetValue(bStatic ? "s=" + funcname : funcname, out minfo) == false)
+                return null;
+
+            foreach (var m in minfo)
+            {
+                bool match = true;
+                var pp = m.GetParameters();
+                if (pp.Length < types.Count)//参数多出来，不匹配
+                {
+                    match = false;
+                    continue;
+                }
+                for (int i = 0; i < pp.Length; i++)
+                {
+                    if (i >= types.Count)//参数多出来
+                    {
+                        if (!pp[i].IsOptional)
+                        {
+
+                            match = false;
+                            break;
+                        }
+                        else
+                        {
+                            myparams.Add(pp[i].DefaultValue);
+                        }
+                    }
+                    else
+                    {
+                        if (pp[i].ParameterType == types[i]) continue;
+
+                        try
+                        {
+                            if (types[i] == null && !pp[i].ParameterType.IsValueType)
+                            {
+                                continue;
+                            }
+                            myparams[i] = content.environment.GetType(types[i]).ConvertTo(content, _params[i], pp[i].ParameterType);
+                            if (myparams[i] == null)
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                    if (match)
+                        break;
+                }
+                if (!match)
+                {
+                    continue;
+                }
+                else
+                {
+                    for (int i = 0; i < myparams.Count; i++)
+                    {
+                        if (i < _params.Count)
+                        {
+                            _params[i] = myparams[i];
+                        }
+                        else
+                        {
+                            _params.Add(myparams[i]);
+                        }
+                    }
+                    return m;
+                }
+
+            }
+
+            if (minfo.Count == 1)
+                return minfo[0];
+
+            return null;
+
+        }
+        public virtual CLS_Content.Value MemberCallCache(CLS_Content content, object object_this, IList<CLS_Content.Value> _params, MethodCache cache)
         {
             List<Type> types = new List<Type>();
             List<object> _oparams = new List<object>();
@@ -362,6 +522,24 @@ namespace CSLE
 
             var targetop = cache.info;
             CLS_Content.Value v = new CLS_Content.Value();
+            if (cache.slow)
+            {
+                var pp = targetop.GetParameters();
+                for (int i = 0; i < pp.Length; i++)
+                {
+                    if (i >= _params.Count)
+                    {
+                        _oparams.Add(pp[i].DefaultValue);
+                    }
+                    else
+                    {
+                        if (pp[i].ParameterType != (Type)_params[i].type)
+                        {
+                            _oparams[i] = content.environment.GetType(_params[i].type).ConvertTo(content, _oparams[i], pp[i].ParameterType);
+                        }
+                    }
+                }
+            }
             v.value = targetop.Invoke(object_this, _oparams.ToArray());
             v.type = targetop.ReturnType;
             return v;
@@ -380,7 +558,7 @@ namespace CSLE
         {
 
             MemberValueCache c;
-            
+
             if (!memberValuegetCaches.TryGetValue(valuename, out c))
             {
                 c = new MemberValueCache();
@@ -491,11 +669,11 @@ namespace CSLE
         public virtual bool MemberValueSet(CLS_Content content, object object_this, string valuename, object value)
         {
             MemberValueCache c;
-            
+
             if (!memberValuesetCaches.TryGetValue(valuename, out c))
             {
                 c = new MemberValueCache();
-                memberValuegetCaches[valuename] = c;
+                memberValuesetCaches[valuename] = c;
                 c.finfo = type.GetField(valuename);
                 if (c.finfo == null)
                 {
@@ -519,7 +697,7 @@ namespace CSLE
             if (c.type < 0)
                 return false;
 
-            if(c.type==1)
+            if (c.type == 1)
             {
                 if (value != null && value.GetType() != c.finfo.FieldType)
                 {
@@ -670,8 +848,13 @@ namespace CSLE
 
     public class RegHelper_Type : ICLS_Type
     {
+
         public RegHelper_Type(Type type, string setkeyword = null)
         {
+            if(type.IsSubclassOf(typeof(Delegate)))
+            {
+                throw new Exception("你想注册的Type是一个Delegate，需要用特别的注册方法");
+            }
             function = new RegHelper_TypeFunction(type);
             if (setkeyword != null)
             {
@@ -684,7 +867,21 @@ namespace CSLE
             this.type = type;
             this._type = type;
         }
+        protected RegHelper_Type(Type type, string setkeyword,bool dele)
+        {
 
+            function = new RegHelper_TypeFunction(type);
+            if (setkeyword != null)
+            {
+                keyword = setkeyword.Replace(" ", "");
+            }
+            else
+            {
+                keyword = type.Name;
+            }
+            this.type = type;
+            this._type = type;
+        }
         public string keyword
         {
             get;
@@ -764,7 +961,14 @@ namespace CSLE
             System.Reflection.MethodInfo call = null;
             var m = ((Type)type).GetMembers();
             if (code == '+')
+            {
+                if ((Type)right.type == typeof(string))
+                {
+                    returntype = typeof(string);
+                    return left.ToString() + right.value as string;
+                }
                 call = _type.GetMethod("op_Addition", new Type[] { this.type, right.type });
+            }
             else if (code == '-')//base = {CLScriptExt.Vector3 op_Subtraction(CLScriptExt.Vector3, CLScriptExt.Vector3)}
                 call = _type.GetMethod("op_Subtraction", new Type[] { this.type, right.type });
             else if (code == '*')//[2] = {CLScriptExt.Vector3 op_Multiply(CLScriptExt.Vector3, CLScriptExt.Vector3)}

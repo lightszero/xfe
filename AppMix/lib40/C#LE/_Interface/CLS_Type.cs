@@ -18,6 +18,7 @@ namespace CSLE
     {
         public System.Reflection.MethodInfo info;
         public bool cachefail = false;
+        public bool slow = false;
     }
     public interface ICLS_TypeFunction
     {
@@ -49,6 +50,8 @@ namespace CSLE
         }
         public static implicit operator Type(CLType m)
         {
+            if (m == null) return null;
+
             return m.type;
         }
         public static implicit operator SType(CLType m)

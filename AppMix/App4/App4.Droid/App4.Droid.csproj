@@ -102,7 +102,7 @@
     <Content Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\androidlib\libAndroid.csproj">
+    <ProjectReference Include="..\..\libAndroid\libAndroid.csproj">
       <Project>{e43891e5-ea33-4c41-8ad3-be70f51e0db3}</Project>
       <Name>libAndroid</Name>
     </ProjectReference>

@@ -16,6 +16,7 @@ System.Object:object
 AppMix.App:App
 System.EventArgs:EventArgs
 //RegMyJson
+CSLEConvert,lib40:CSLEConvert
 MyJson,lib40:MyJson
 MyJson+jsontype,lib40:MyJson.jsontype
 MyJson+IJsonNode,lib40:MyJson.IJsonNode
