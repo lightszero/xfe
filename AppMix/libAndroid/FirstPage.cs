@@ -197,7 +197,7 @@ namespace AppMix
                         if (err2 == null)
                         {
 
-                            NavigationPage.SetHasNavigationBar(_page, false);
+                            //NavigationPage.SetHasNavigationBar(_page, false);
 
                             //Button hi = new Button();
                             //_page.Content = hi;

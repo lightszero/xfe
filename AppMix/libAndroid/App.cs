@@ -36,11 +36,14 @@ namespace AppMix
         public static Dictionary<string, object> startparams;
         public static update.updatemgr updatemgr = new update.updatemgr();
         static string savepath;
+        public static int width;
+        public static int height;
         public static Page GetMainPage(Dictionary<string, object> _startparam)
         {
             startparams = _startparam;
             savepath = startparams["savepath"] as string;
-
+            width = (int)App.startparams["width"];
+            height = (int)App.startparams["height"];
             FirstPage fp = new FirstPage();
             fp.InitPage();
             NavigationPage npage = new NavigationPage(fp.page);

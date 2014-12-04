@@ -9,6 +9,8 @@ namespace AppMix
 {
     class App
     {
+        public static int width;
+        public static int height;
         public static void GetTxtLocal(string filename, Action<string, Exception> ongot)
         {
         }
