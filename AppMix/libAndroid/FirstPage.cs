@@ -50,8 +50,14 @@ namespace AppMix
             btn.Text = "检查更新并启动";
 
             btn.Clicked += ClickBegin;//给按钮添加事件
-
             layout.Children.Add(btn);
+
+
+            Button btn2 = new Button();
+            btn2.Text = "Debug http://10.10.10.200/";
+
+            btn2.Clicked += ClickBegin2;//给按钮添加事件
+            layout.Children.Add(btn2);
         }
         void ClickBegin(object sender, EventArgs args)
         {
@@ -102,6 +108,11 @@ namespace AppMix
                 }
                 );
 
+        }
+        void ClickBegin2(object sender, EventArgs args)
+        {
+            editUrl.Text = "http://10.10.10.200/";
+            ClickBegin(sender,args);
         }
 
         void InitFirstPage()
